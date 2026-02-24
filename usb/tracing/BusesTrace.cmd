@@ -115,15 +115,17 @@ echo 2) UsbAndPnPProfile (USB2, USB3, USB4 and PnP)
 echo 3) UsbCProfile (UCM, URS and USBFN)
 echo 4) LowPowerBusesProfile (SerCx2 and SpbCx)
 echo 5) InputOnlyWithVerboseWppProfile (Input)
-echo 6) Back
+echo 6) Usb4WithExtendedDisplayProfile (USB3, USB4, PnP, PCI, Display, and Display IHV providers)
+echo 7) Back
 echo.
 set /p selection=Enter selection number:
 if "%selection%"=="1" set profileName=UsbOnlyProfile
 if "%selection%"=="2" set profileName=UsbAndPnpProfile
 if "%selection%"=="3" set profileName=UsbCProfile
-if "%selection%"=="4" set profileName=LowPowerBUsesProfile
+if "%selection%"=="4" set profileName=LowPowerBusesProfile
 if "%selection%"=="5" set profileName=InputOnlyWithVerboseWppProfile
-if "%selection%"=="6" goto BasicProfilesMenu
+if "%selection%"=="6" set profileName=Usb4WithExtendedDisplayProfile
+if "%selection%"=="7" goto BasicProfilesMenu
 if not "%profileName%"=="" goto StartOptionsMenu
 echo.
 echo "%selection%" is not a valid option.  Please try again.
@@ -276,6 +278,7 @@ rem Collecting DispDiag and if availiable the DES mini dump
 if  "%profileName%"=="SensorsOnlyProfile" goto CollectDispDiag
 if  "%profileName%"=="Usb4WithTunnelsProfile" goto CollectDispDiag
 if  "%profileName%"=="BusesAllProfile" goto CollectDispDiag
+if  "%profileName%"=="Usb4WithExtendedDisplayProfile" goto CollectDispDiag
 goto SkipCollectDispDiag
 :CollectDispDiag
     echo.
@@ -358,4 +361,3 @@ goto End
 endlocal
 echo.
 pause
-
