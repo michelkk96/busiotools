@@ -41,6 +41,10 @@
       <BufferSize Value="64" />
       <Buffers Value="1.4" PercentageOfTotalMemory="true" MaximumBufferSpace="32" />
     </EventCollector>
+    <EventCollector Id="EventCollector_Display_Extended" Name="ExtendedDisplayTrace">
+      <BufferSize Value="64" />
+      <Buffers Value="3" PercentageOfTotalMemory="true" MaximumBufferSpace="120" />
+    </EventCollector>
     <EventCollector Id="EventCollector_NdisNetCx" Name="NdisNetCxTrace">
       <BufferSize Value="64" />
       <Buffers Value="1.4" PercentageOfTotalMemory="true" MaximumBufferSpace="32" />
@@ -518,6 +522,21 @@
     </EventProvider>
     <EventProvider Id="DisplayWin32K" Name="deb96c0a-d2d9-5868-a5d5-50ee13513c8b" NonPagedMemory="true" Level="5" />
     <EventProvider Id="DisplayDxgDiagnostics" Name="221D444C-D07E-4FDE-B425-15B746CF535B" NonPagedMemory="true" Level="5" />
+    <EventProvider Id="DisplayIHV1" Name="6F556899-027A-45EC-A3F5-C58E7FB94FF5" NonPagedMemory="true" Level="5">
+      <Keywords>
+        <Keyword Value="0xFFFFFFFFFFFFFFFF" />
+      </Keywords>
+    </EventProvider>
+    <EventProvider Id="DisplayIHV2" Name="6381f857-7661-4b04-9521-288319e75f12" NonPagedMemory="true" Level="5">
+      <Keywords>
+        <Keyword Value="0xFFFFFFFFFFFFFFFF" />
+      </Keywords>
+    </EventProvider>
+    <EventProvider Id="DisplayIHV3" Name="31AB337F-8BA3-4145-88F3-CEA537BFE861" NonPagedMemory="true" Level="5">
+      <Keywords>
+        <Keyword Value="0xFFFFFFFFFFFFFFFF" />
+      </Keywords>
+    </EventProvider>
     <EventProvider Id="NetAdapterCxWpp" Name="16D3161E-4883-493F-ACD9-8E2065B82270" NonPagedMemory="true" Level="5">
       <Keywords>
         <Keyword Value="0xFFFFFFFFFFFFFFFF" />
@@ -930,6 +949,63 @@
     <Profile Id="Usb4WithTunnelsProfile.Verbose.File" Name="Usb4WithTunnelsProfile" DetailLevel="Verbose" LoggingMode="File"
       Description="USB3, USB4, PnP, Display, Net and PCI"
       Base="Usb4WithTunnelsProfile.Verbose.Memory"/>
+
+    <Profile Id="Usb4WithExtendedDisplayProfile.Verbose.Memory" Name="Usb4WithExtendedDisplayProfile" DetailLevel="Verbose" LoggingMode="Memory"
+      Description="USB3, USB4, PnP, Display, and PCI">
+      <Collectors>
+        <EventCollectorId Value="EventCollector_Usb">
+          <EventProviders>
+            <EventProviderId Value="UsbXhciCommonEtw" />
+            <EventProviderId Value="UsbXhciCompanionWpp" />
+            <EventProviderId Value="UsbXhciDriverWpp" />
+            <EventProviderId Value="UsbXhciTrustletWpp" />
+            <EventProviderId Value="UcxEtw" />
+            <EventProviderId Value="UcxWpp" />
+            <EventProviderId Value="UsbHub3Etw" />
+            <EventProviderId Value="UsbHub3Wpp" />
+            <EventProviderId Value="QcXhciFilterWpp" />
+            <EventProviderId Value="QcUsbFnSSFilterWpp" />
+            <EventProviderId Value="QcUsbCUcsi8280Wpp" />
+            <EventProviderId Value="NVPEP" />
+          </EventProviders>
+        </EventCollectorId>
+        <EventCollectorId Value="EventCollector_Usb4">
+          <EventProviders>
+            <EventProviderId Value="USB4HrdWpp" />
+            <EventProviderId Value="USB4DrdWpp" />
+            <EventProviderId Value="USB4HrdTlg" />
+            <EventProviderId Value="USB4DrdTlg" />
+            <EventProviderId Value="Usb4NetWpp" />
+            <EventProviderId Value="QcUsb4FilterWpp" />
+            <EventProviderId Value="QcUsb4BusWpp" />
+          </EventProviders>
+        </EventCollectorId>
+        <EventCollectorId Value="EventCollector_PnP">
+          <EventProviders>
+            <EventProviderId Value="Microsoft-Windows-Kernel-PnP" />
+          </EventProviders>
+        </EventCollectorId>
+        <EventCollectorId Value="EventCollector_Pci">
+          <EventProviders>
+            <EventProviderId Value="PciWpp" />
+            <EventProviderId Value="QcPpxWpp" />
+          </EventProviders>
+        </EventCollectorId>
+        <EventCollectorId Value="EventCollector_Display_Extended">
+          <EventProviders>
+            <EventProviderId Value="DisplayDxgDiagnostics" />
+            <EventProviderId Value="DisplayWin32K" />
+            <EventProviderId Value="QcDxkmWpp" />
+            <EventProviderId Value="DisplayIHV1" />
+            <EventProviderId Value="DisplayIHV2" />
+            <EventProviderId Value="DisplayIHV3" />
+          </EventProviders>
+        </EventCollectorId>
+      </Collectors>
+    </Profile>
+    <Profile Id="Usb4WithExtendedDisplayProfile.Verbose.File" Name="Usb4WithExtendedDisplayProfile" DetailLevel="Verbose" LoggingMode="File"
+      Description="USB3, USB4, PnP, Display, and PCI"
+      Base="Usb4WithExtendedDisplayProfile.Verbose.Memory"/>
 
     <Profile Id="USBCProfile.Verbose.Memory" Name="USBCProfile" DetailLevel="Verbose" LoggingMode="Memory"
       Description="USB-C, URS and USBFN">
