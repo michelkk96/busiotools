@@ -18,6 +18,7 @@ set Buses_Backup_LogMinidumpType=0x1120
 set Buses_Backup_LogEnable=0
 set Buses_Backup_LogFlushPeriodSeconds=300
 set collectPnpStates=1
+set busesTraceRegKey=HKLM\Software\Microsoft\BusesTrace
 
 if not exist %wprpFileName% (
     echo.
@@ -201,6 +202,9 @@ echo Configuring Boot Session Trace... (%wprpFileName%!%profileName%)
 wpr.exe -addboot %wprpFileName%!%profileName% -filemode -recordTempTo %traceFilesOutputPath%\
 if not %ERRORLEVEL%==0 goto End
 
+rem Save the profile name to registry so we can retrieve it when stopping the boot trace.
+REG.EXE ADD "%busesTraceRegKey%" /v ProfileName /t REG_SZ /d %profileName% /f
+
 echo.
 echo ###############################################################################
 echo Please reboot your PC to start tracing. After reproducing the issue, run this
@@ -210,6 +214,9 @@ echo.
 goto End
 
 :StopBootTrace
+rem Restore the profile name saved when the boot trace was configured.
+FOR /F "skip=2 tokens=3" %%v IN ('reg.exe query "%busesTraceRegKey%" /v ProfileName 2^>nul') DO set profileName=%%v
+REG.EXE DELETE "%busesTraceRegKey%" /v ProfileName /f >nul 2>&1
 echo Saving WPR status to %busesTraceInfoFileName%...
 wpr.exe -status profiles collectors -details > %traceFilesOutputPath%\%busesTraceInfoFileName%
 echo Stopping boot session tracing...
@@ -274,11 +281,12 @@ if exist %SystemRoot%\LiveKernelReports\USB* (
 )
 
 
-rem Collecting DispDiag and if availiable the DES mini dump
+rem Collecting DispDiag and if available the DES mini dump
 if  "%profileName%"=="SensorsOnlyProfile" goto CollectDispDiag
 if  "%profileName%"=="Usb4WithTunnelsProfile" goto CollectDispDiag
 if  "%profileName%"=="BusesAllProfile" goto CollectDispDiag
 if  "%profileName%"=="Usb4WithExtendedDisplayProfile" goto CollectDispDiag
+if  "%profileName%"=="" goto CollectDispDiag
 goto SkipCollectDispDiag
 :CollectDispDiag
     echo.
@@ -286,10 +294,10 @@ goto SkipCollectDispDiag
     dispdiag.exe
     move "%scriptDirectory%*.dat" %traceFilesOutputPath%
 
-    if exist %miniDumpCollectionScript% (
+    if exist %scriptDirectory%%miniDumpCollectionScript% (
         echo Now collecting sensor process minidumps
         pushd "%~dp0"
-        powershell -ExecutionPolicy bypass -file "%miniDumpCollectionScript%" -FileList "Microsoft.Graphics.Display.DisplayEnhancementService.dll umpoext.dll sensorservice.dll SensorsCx.dll" -OutputPath "%traceFilesOutputPath%"
+        powershell -ExecutionPolicy bypass -file "%scriptDirectory%%miniDumpCollectionScript%" -FileList "Microsoft.Graphics.Display.DisplayEnhancementService.dll umpoext.dll sensorservice.dll SensorsCx.dll" -OutputPath "%traceFilesOutputPath%"
         copy %SYSTEMROOT%\system32\DispDiag*.dat %traceFilesOutputPath% >nul 2>&1
         popd
     )
